@@ -116,7 +116,7 @@ class Home extends Component {
 
 
 
-    const mainMessage = (
+    const header = (
       <Grid
         container
         spacing={0}
@@ -124,18 +124,18 @@ class Home extends Component {
         justify="flex-start"
         alignItems="flex-start"
         style={{ minHeight: '100vh' }}
-        className={classes.mainMessageContainer}
+        className={classes.headerContainer}
       >
         <Grid item>
 
           <Typography
             variant={"h3"}
-            className={classes.mainMessage}
+            className={classes.header}
             align="flex-start"
           >
             {this.state.mode === 0 ? (
               <React.Fragment>
-                Welcome to MSCI 245!
+                Review a Movie!
               </React.Fragment>
             ) : (
               <React.Fragment>
@@ -156,7 +156,7 @@ class Home extends Component {
           <Paper
             className={classes.paper}
           >
-            {mainMessage}
+            {header}
           </Paper>
 
         </div>
