@@ -17,7 +17,7 @@ import Paper from "@material-ui/core/Paper";
 import { withStyles } from '@material-ui/core/styles';
 
 //Dev mode
-const serverURL = "https://ov-research-4.uwaterloo.ca:9090"; //enable for dev mode
+const serverURL = "https://ov-research-4.uwaterloo.ca:3046"; //enable for dev mode
 //Deployment mode instructions
 //const serverURL = "http://ov-research-4.uwaterloo.ca:PORT"; //enable for deployed mode; Change PORT to the port number given to you;
 //To find your port number:
