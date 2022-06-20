@@ -254,6 +254,7 @@ class Home extends Component {
   };
 
   componentDidMount() {
+    //this.loadUserSettings();
   }
 
 
