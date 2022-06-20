@@ -63,19 +63,22 @@ const Review = () => {
 
  const handleMovieSelect = (movie) => {
    setMovieSelect(movie);
- }
+ };
  
  const handleMovieRating = (rating) => {
    setRating(rating);
- }
+ };
 
  const handleReviewTitle = (title) => {
   setReviewTitle(title);
-}
+};
 
 const handleReviewBody = (body) => {
   setReviewBody(body);
-}
+};
+
+
+
 
  const handleSubmission = (event) => {
   setSubmissionData([movieSelect,reviewTitle,reviewBody,movieRating]);
@@ -114,7 +117,6 @@ const handleReviewBody = (body) => {
            <form autoComplete='off'>
              <MovieSelection handleMovieSelect={handleMovieSelect} movieSelect={movieSelect}/>
              <ReviewTitle handleReviewTitle={handleReviewTitle} reviewTitle={reviewTitle}/>
-             <br></br>
              <br></br>
              <br></br>
              <ReviewBody handleReviewBody = {handleReviewBody} reviewBody = {reviewBody}/>
@@ -229,14 +231,15 @@ const ReviewRating = (props) => {
  
  return (
    <FormControl component="fieldset">
-     <FormLabel component="legend">Movie Rating</FormLabel >
-     <RadioGroup aria-label="gender" name="gender1" value={props.movieRating} onChange={handleInput} row helperText="Choose a rating.">
+     <FormLabel component="legend">Movie Rating </FormLabel >
+     <RadioGroup aria-label="gender" name="gender1" value={props.movieRating} onChange={handleInput} row>
        <FormControlLabel value="1" control={<Radio required={true} />} label="1" />
        <FormControlLabel value="2" control={<Radio required={true} />} label="2" />
        <FormControlLabel value="3" control={<Radio required={true} />} label="3" />
        <FormControlLabel value="4" control={<Radio required={true} />} label="4" />
        <FormControlLabel value="5" control={<Radio required={true} />} label="5" />
      </RadioGroup>
+     <FormHelperText>Choose a rating!</FormHelperText>
    </FormControl>
  );
 }
