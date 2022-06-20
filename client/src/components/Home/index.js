@@ -230,7 +230,7 @@ const ReviewRating = (props) => {
  return (
    <FormControl component="fieldset">
      <FormLabel component="legend">Movie Rating</FormLabel >
-     <RadioGroup aria-label="gender" name="gender1" value={props.movieRating} onChange={handleInput} row>
+     <RadioGroup aria-label="gender" name="gender1" value={props.movieRating} onChange={handleInput} row helperText="Choose a rating.">
        <FormControlLabel value="1" control={<Radio required={true} />} label="1" />
        <FormControlLabel value="2" control={<Radio required={true} />} label="2" />
        <FormControlLabel value="3" control={<Radio required={true} />} label="3" />
