@@ -65,17 +65,17 @@ const Review = () => {
    setMovieSelect(movie);
  }
  
- const handleReviewTitle = (title) => {
-   setReviewTitle(title);
- }
- 
- const handleReviewBody = (body) => {
-   setReviewBody(body);
- }
- 
  const handleMovieRating = (rating) => {
    setRating(rating);
  }
+
+ const handleReviewTitle = (title) => {
+  setReviewTitle(title);
+}
+
+const handleReviewBody = (body) => {
+  setReviewBody(body);
+}
 
  const handleSubmission = (event) => {
   setSubmissionData([movieSelect,reviewTitle,reviewBody,movieRating]);
