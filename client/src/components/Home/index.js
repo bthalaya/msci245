@@ -241,4 +241,59 @@ const ReviewRating = (props) => {
  );
 }
 
-export default Review;
+class Home extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userID: 1,
+      mode: 0
+    }
+  };
+
+  componentDidMount() {
+  }
+
+
+  loadUserSettings() {
+    this.callApiLoadUserSettings()
+      .then(res => {
+        var parsed = JSON.parse(res.express);
+        console.log("loadUserSettings parsed: ", parsed[0].mode)
+        this.setState({ mode: parsed[0].mode });
+      });
+  }
+
+  callApiLoadUserSettings = async () => {
+    const url = serverURL + "/api/loadUserSettings";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //authorization: `Bearer ${this.state.token}`
+      },
+      body: JSON.stringify({
+        userID: this.state.userID
+      })
+    });
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    console.log("User settings: ", body);
+    return body;
+  }
+
+  render() {
+    const { classes } = this.props;
+
+
+    return (
+      <Review/>
+    );
+  }
+}
+
+Home.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default Home;
