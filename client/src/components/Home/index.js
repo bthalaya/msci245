@@ -18,8 +18,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 //Dev mode
 //const serverURL = "http://localhost:5000";
-const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3046"
-//const serverURL = "https://ov-research-4.uwaterloo.ca:3046";
+const serverURL = "";
+//const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3046";
  //enable for dev mode
  //enable for dev mode
 //Deployment mode instructions
@@ -62,7 +62,9 @@ const Review = (props) => {
  const [reviewBody, setReviewBody] = React.useState('');
  const [movieRating, setRating] = React.useState('');
  const [submissionCheck,setSubmissionCheck] = React.useState(false);
+ const [submissionValidation,setSubmissionValidation] = React.useState(false);
  const [submissionData,setSubmissionData] = React.useState([]);
+ const [userID,setUserID]=React.useState(1);
  let [reviewData,setReviewData] = React.useState({});
  
 
@@ -83,25 +85,30 @@ const handleReviewBody = (body) => {
   setReviewBody(body);
 };
 
-const handleSubmission = (event) => {
-  event.preventDefault();
-  setSubmissionData([movieSelect.name,reviewTitle,movieRating,reviewBody,movieSelect.id])
-
-  let data = {
-    movieName: movieSelect.name,
-    reviewTitle: reviewTitle,
-    reviewContent: reviewBody,
-    reviewScore: movieRating,
-    userID: 1,
-    movieID: movieSelect.id
-  }
-  setReviewData(data);
-  loadApiAddReview();
-  setMovieSelect("");
-  setReviewTitle("");
-  setReviewBody("");
-  setRating("");
+const handleSubmissionCheck = (event) =>{
   setSubmissionCheck(true);
+}
+const handleSubmissionValidation = (event) => {
+  event.preventDefault();
+  if(movieSelect != '' && reviewTitle != '' && reviewBody != '' && movieRating !=''){
+    let data = {
+      movieName: movieSelect.name,
+      reviewTitle: reviewTitle,
+      reviewContent: reviewBody,
+      reviewScore: movieRating,
+      userID: 1,
+      movieID: movieSelect.id
+    }
+    setSubmissionData([movieSelect.name,reviewTitle,movieRating,reviewBody,movieSelect.id])
+    setReviewData(data);
+    loadApiAddReview();
+    setMovieSelect("");
+    setReviewTitle("");
+    setReviewBody("");
+    setRating("");
+    setSubmissionValidation(true);
+    setSubmissionCheck(false);
+  }
 };
 
 const loadApiAddReview = () => {
@@ -122,7 +129,7 @@ const loadApiAddReview = () => {
     "reviewContent": reviewBody,
     "reviewScore":movieRating,
     "movieID":movieSelect.id,
-    "userID": 1
+    "userID": userID
   };
 
   const response = await fetch(url, {
@@ -160,22 +167,22 @@ return (
            Movie Review
          </Typography>
  
-         <FormControl onSubmit={handleSubmission}>
-           <form autoComplete='off'>
-             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect}/>
-             <ReviewTitle handleReviewTitle={handleReviewTitle} reviewTitle={reviewTitle}/>
+         <FormControl>
+           <form autoComplete='off' onSubmit={handleSubmissionValidation}>
+             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect} submissionCheck={submissionCheck}/>
+             <ReviewTitle handleReviewTitle={handleReviewTitle} reviewTitle={reviewTitle} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
-             <ReviewBody handleReviewBody = {handleReviewBody} reviewBody = {reviewBody}/>
+             <ReviewBody handleReviewBody = {handleReviewBody} reviewBody = {reviewBody} submissionCheck={submissionCheck}/>
              <br></br>
-             <ReviewRating handleMovieRating = {handleMovieRating} movieRating = {movieRating}/>
+             <ReviewRating handleMovieRating = {handleMovieRating} movieRating = {movieRating} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
-             <Button variant="contained" color="primary" type="submit">Submit</Button>
+             <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
-         </FormControl>
+         </FormControl>                               
          {
-          submissionCheck == true &&
+          submissionValidation == true &&
           <div>
             <br></br>
             <Typography variant="h5">Your review has been received!</Typography>
@@ -206,7 +213,6 @@ const MovieSelection = (props) => {
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          required
           value={props.movieSelect}
           label="Movie"
           onChange={handleInput}
@@ -219,7 +225,11 @@ const MovieSelection = (props) => {
         }
         )}
         </Select>
-        <FormHelperText>Select a Movie to Review</FormHelperText>
+        <FormHelperText>Select a movie</FormHelperText>
+        {
+            props.movieSelect == '' && props.submissionCheck == true ? (
+            <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
+         }
       </div>
   );
 }
@@ -236,13 +246,16 @@ const ReviewTitle = (props) => {
     <div>
       <TextField
         id="review-title" 
-         required
          label="Review Title"
          style={{ width: 300 }}
          value={props.reviewTitle}
          onChange = {handleInput}
          helperText="Enter Review Title"
        />
+       {
+         props.reviewTitle == '' && props.submissionCheck == true ? (
+          <div><em style={{color:'red'}}>*Please enter your review title. It is a mandatory field.</em></div>) : (<div></div>)
+      }
     </div>
 );
 }
@@ -259,7 +272,6 @@ const ReviewBody = (props) => {
         id="outlined-multiline-flexible"
         label="Movie Review"
         multiline
-        required
         style={{ width: 600 }}
         rows={5}
         defaultValue="Enter review for movie"
@@ -268,6 +280,10 @@ const ReviewBody = (props) => {
         value={props.reviewBody}
         onChange = {handleInput}
       />
+      {
+        props.reviewBody == '' && props.submissionCheck == true ? (
+          <div><em style={{color:'red'}}>*Please enter your review. It is a mandatory field!</em></div>) : (<div></div>)
+       }
     </div>
   );
 }
@@ -282,13 +298,17 @@ const ReviewRating = (props) => {
    <FormControl component="fieldset">
      <FormLabel component="legend">Movie Rating </FormLabel >
      <RadioGroup aria-label="gender" name="gender1" value={props.movieRating} onChange={handleInput} row>
-       <FormControlLabel value="1" control={<Radio required={true} />} label="1" />
-       <FormControlLabel value="2" control={<Radio required={true} />} label="2" />
-       <FormControlLabel value="3" control={<Radio required={true} />} label="3" />
-       <FormControlLabel value="4" control={<Radio required={true} />} label="4" />
-       <FormControlLabel value="5" control={<Radio required={true} />} label="5" />
+       <FormControlLabel value="1" control={<Radio  />} label="1" />
+       <FormControlLabel value="2" control={<Radio  />} label="2" />
+       <FormControlLabel value="3" control={<Radio  />} label="3" />
+       <FormControlLabel value="4" control={<Radio  />} label="4" />
+       <FormControlLabel value="5" control={<Radio  />} label="5" />
      </RadioGroup>
      <FormHelperText>Choose a rating!</FormHelperText>
+     {
+    props.movieRating == '' && props.submissionCheck == true ? (
+      <span><em style={{color:'red'}}>*Please select the rating. It is a mandatory field!</em></span>) : (<div></div>)
+   }
    </FormControl>
  );
 }
