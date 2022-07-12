@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import {createTheme, ThemeProvider, styled} from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { Select } from '@material-ui/core';
@@ -17,7 +17,11 @@ import Paper from "@material-ui/core/Paper";
 import { withStyles } from '@material-ui/core/styles';
 
 //Dev mode
-const serverURL = "https://ov-research-4.uwaterloo.ca:3046"; //enable for dev mode
+//const serverURL = "http://localhost:5000";
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3046"
+//const serverURL = "https://ov-research-4.uwaterloo.ca:3046";
+ //enable for dev mode
+ //enable for dev mode
 //Deployment mode instructions
 //const serverURL = "http://ov-research-4.uwaterloo.ca:PORT"; //enable for deployed mode; Change PORT to the port number given to you;
 //To find your port number:
@@ -51,7 +55,7 @@ const MainGridContainer = styled(Grid)(({ theme }) => ({
  margin: theme.spacing(4),
 }))
 
-const Review = () => {
+const Review = (props) => {
  
  const [movieSelect, setMovieSelect] = React.useState('');
  const [reviewTitle, setReviewTitle] = React.useState('');
@@ -59,10 +63,12 @@ const Review = () => {
  const [movieRating, setRating] = React.useState('');
  const [submissionCheck,setSubmissionCheck] = React.useState(false);
  const [submissionData,setSubmissionData] = React.useState([]);
+ let [reviewData,setReviewData] = React.useState({});
  
 
  const handleMovieSelect = (movie) => {
    setMovieSelect(movie);
+   console.log(movie.name);
  };
  
  const handleMovieRating = (rating) => {
@@ -77,20 +83,61 @@ const handleReviewBody = (body) => {
   setReviewBody(body);
 };
 
-
-
-
- const handleSubmission = (event) => {
-  setSubmissionData([movieSelect,reviewTitle,reviewBody,movieRating]);
+const handleSubmission = (event) => {
   event.preventDefault();
-  setSubmissionCheck(true); 
-  setMovieSelect('');
-  setRating('');
-  setReviewBody('');
-  setReviewTitle('');
- }
- 
- return (
+  setSubmissionData([movieSelect.name,reviewTitle,movieRating,reviewBody,movieSelect.id])
+
+  let data = {
+    movieName: movieSelect.name,
+    reviewTitle: reviewTitle,
+    reviewContent: reviewBody,
+    reviewScore: movieRating,
+    userID: 1,
+    movieID: movieSelect.id
+  }
+  setReviewData(data);
+  loadApiAddReview();
+  setMovieSelect("");
+  setReviewTitle("");
+  setReviewBody("");
+  setRating("");
+  setSubmissionCheck(true);
+};
+
+const loadApiAddReview = () => {
+  callApiAddReview()
+    .then((res) => {
+      console.log(res.message);
+    })
+};
+
+
+
+ const callApiAddReview = async () => {
+  const url = serverURL + "/api/addReview";
+  console.log(reviewData);
+
+  let reviewInfo = {
+    "reviewTitle": reviewTitle,
+    "reviewContent": reviewBody,
+    "reviewScore":movieRating,
+    "movieID":movieSelect.id,
+    "userID": 1
+  };
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(reviewInfo)
+  });
+  const body = await response.json();
+  if (response.status !== 200) throw Error(body.message);
+  return body;
+}
+
+return (
    <ThemeProvider theme={lightTheme}>
      <Box
        sx={{
@@ -115,7 +162,7 @@ const handleReviewBody = (body) => {
  
          <FormControl onSubmit={handleSubmission}>
            <form autoComplete='off'>
-             <MovieSelection handleMovieSelect={handleMovieSelect} movieSelect={movieSelect}/>
+             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect}/>
              <ReviewTitle handleReviewTitle={handleReviewTitle} reviewTitle={reviewTitle}/>
              <br></br>
              <br></br>
@@ -135,10 +182,11 @@ const handleReviewBody = (body) => {
             <Paper>
               <Typography variant="h6">Movie Name: {submissionData[0]} </Typography>
               <Typography variant="h6">Review Title: {submissionData[1]}</Typography>
-              <Typography variant="h6">Movie Rating: {submissionData[3]} Stars</Typography>
-              <Typography variant="h7">Movie Review: {submissionData[2]} </Typography>
+              <Typography variant="h6">Movie Rating: {submissionData[2]} Stars</Typography>
+              <Typography variant="h7">Movie Review: {submissionData[3]} </Typography>
             </Paper>
-          </div> 
+          </div>
+
         }        
        </MainGridContainer>
      </Box>
@@ -164,11 +212,12 @@ const MovieSelection = (props) => {
           onChange={handleInput}
           style={{width:400}}
         >
-          <MenuItem value={'Footloose'}>Footloose</MenuItem>
-          <MenuItem value={'The Karate Kid'}>The Karate Kid</MenuItem>
-          <MenuItem value={'The Notebook'}>The Notebook</MenuItem>
-          <MenuItem value={'Forrest Gump'}>Forrest Gump</MenuItem>
-          <MenuItem value={'Top Gun'}>Top Gun</MenuItem>
+        {props.movies.map((movie) => {
+          return (
+            <MenuItem key={movie.id} value={movie}>{movie.name}</MenuItem>
+          )
+        }
+        )}
         </Select>
         <FormHelperText>Select a Movie to Review</FormHelperText>
       </div>
@@ -244,21 +293,31 @@ const ReviewRating = (props) => {
  );
 }
 
-class Home extends Component {
+const Home = () => {
+ /**
   constructor(props) {
     super(props);
     this.state = {
       userID: 1,
-      mode: 0
-    }
-  };
+      mode: 0,
+   }
+  */ 
 
-  componentDidMount() {
-    //this.loadUserSettings();
-  }
+  let [userId,setUserID] = React.useState(1);
+  let [mode,setMode]=React.useState(0);
+  let [movies,setMovies]=React.useState([]);
+  
 
 
-  loadUserSettings() {
+
+
+  React.useEffect(() => {
+    //loadUserSettings();
+    loadGetMovies();
+   },[]);
+
+
+   const loadUserSettings =() => {
     this.callApiLoadUserSettings()
       .then(res => {
         var parsed = JSON.parse(res.express);
@@ -267,7 +326,14 @@ class Home extends Component {
       });
   }
 
-  callApiLoadUserSettings = async () => {
+  const loadGetMovies =() => {
+    callGetMovies()
+      .then(res => {
+        setMovies(res.movieData);
+      });
+  }
+  
+   const callApiLoadUserSettings = async () => {
     const url = serverURL + "/api/loadUserSettings";
 
     const response = await fetch(url, {
@@ -282,19 +348,35 @@ class Home extends Component {
     });
     const body = await response.json();
     if (response.status !== 200) throw Error(body.message);
-    console.log("User settings: ", body);
+    return body;
+  }
+  
+  const callGetMovies = async() => {
+    
+    //console.log('t',url)
+    const url = serverURL + "/api/getMovies";
+    console.log(url)
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //authorization: `Bearer ${this.state.token}`
+      },
+    });
+    const body =await response.json();
+    if (response.status !== 200) throw Error(body.message);
     return body;
   }
 
-  render() {
-    const { classes } = this.props;
-
 
     return (
-      <Review/>
-    );
-  }
-}
+      <div> 
+        <Review movies={movies}/> 
+      </div>     
+    )
+  };
+
+
 
 Home.propTypes = {
   classes: PropTypes.object.isRequired
