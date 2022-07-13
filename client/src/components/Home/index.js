@@ -122,7 +122,6 @@ const loadApiAddReview = () => {
 
  const callApiAddReview = async () => {
   const url = serverURL + "/api/addReview";
-  console.log(reviewData);
 
   let reviewInfo = {
     "reviewTitle": reviewTitle,
@@ -132,6 +131,7 @@ const loadApiAddReview = () => {
     "userID": userID
   };
 
+  console.log(reviewInfo);
   const response = await fetch(url, {
     method: "POST",
     headers: {
