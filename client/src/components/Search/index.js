@@ -74,13 +74,13 @@ const Review = (props) => {
  const [actorInfo, setActorInfo] = React.useState('');
  const [directorInfo, setDirectorInfo] = React.useState('');
  const [submissionValidation,setSubmissionValidation] = React.useState(false);
- let [searchData,setSearchData] = React.useState({});
+ let [searchData,setSearchData] = React.useState([]);
  let [searchAnswer,setSearchAnswer] = React.useState({});
  
 
  const handleMovieSelect = (movie) => {
    setMovieSelect(movie);
-   console.log(movie.name);
+   console.log(movie);
  };
  
  const handleActorInfo = (actorName) => {
@@ -95,7 +95,7 @@ const handleSubmissionValidation = (event) => {
   event.preventDefault();
   if(movieSelect != '' || actorInfo != '' || directorInfo !=''){
     let data = {
-      movieName: movieSelect.name,
+      movieName: movieSelect,
       actorName: actorInfo,
       directorName: directorInfo
     }
@@ -111,6 +111,7 @@ const handleSubmissionValidation = (event) => {
 const loadApiSearchMovies = () => {
   callApiSearchMovies()
     .then((res) => {
+      setSearchAnswer(res.data);
     })
 };
 
@@ -123,7 +124,6 @@ const loadApiSearchMovies = () => {
     "movie": movieSelect,
     "actorInfo": actorInfo,
     "directorInfo":directorInfo,
-    "movieID":movieSelect.id,
   };
 
   console.log(searchInfo);
@@ -253,25 +253,17 @@ const MovieSelection = (props) => {
   const handleInput = (event) => {
     props.handleMovieSelect(event.target.value);
   };
-  return (
-        <div>
-        <InputLabel id="demo-simple-select-label">Movie</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={props.movieSelect}
-          label="Movie"
-          onChange={handleInput}
-          style={{width:400}}
-        >
-        {props.movies.map((movie) => {
-          return (
-            <MenuItem key={movie.id} value={movie}>{movie.name}</MenuItem>
-          )
-        }
-        )}
-        </Select>
-        <FormHelperText>Select a movie</FormHelperText>
+    return (
+
+      <div>
+        <TextField
+          id="movie-title" 
+           label="Movie name"
+           style={{ width: 450 }}
+           value={props.movieSelect}
+           onChange = {handleInput}
+           helperText="Enter movie name"
+         />
       </div>
   );
 }
@@ -287,7 +279,7 @@ const ActorField = (props) => {
 
     <div>
       <TextField
-        id="review-title" 
+        id="actor-name" 
          label="Actor's name"
          style={{ width: 300 }}
          value={props.actorInfo}
@@ -308,7 +300,7 @@ const DirectorField = (props) => {
    
        <div>
          <TextField
-           id="review-title" 
+           id="director-name" 
             label="Director's name"
             style={{ width: 300 }}
             value={props.DirectorInfo}
