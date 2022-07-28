@@ -70,55 +70,70 @@ const MainGridContainer = styled(Grid)(({ theme }) => ({
 
 const Recommendation = (props) => {
  
- const [movieSelect, setMovieSelect] = React.useState('');
+ const [movieSelect1, setMovieSelect1] = React.useState('');
+ const [movieSelect2, setMovieSelect2] = React.useState('');
+ const [submissionCheck,setSubmissionCheck] = React.useState(false);
  const [submissionValidation,setSubmissionValidation] = React.useState(false);
- let [searchData,setSearchData] = React.useState([]);
- let [searchAnswer,setSearchAnswer] = React.useState({});
+ const [submissionData,setSubmissionData] = React.useState([]);
+ let [reviewData,setReviewData] = React.useState({});
  
 
- const handleMovieSelect = (movie) => {
-   setMovieSelect(movie);
-   console.log(movie);
+ const handleMovieSelect1 = (movie) => {
+   setMovieSelect1(movie);
+   console.log(movie.name);
  };
+
+ const handleMovieSelect2 = (movie) => {
+  setMovieSelect2(movie);
+  console.log(movie.name);
+};
  
 
+
+const handleSubmissionCheck = (event) =>{
+  setSubmissionCheck(true);
+}
 const handleSubmissionValidation = (event) => {
   event.preventDefault();
-  if(movieSelect != ''){
+  if(movieSelect1 != '' && movieSelect2 != '' && movieSelect1 != movieSelect2){
     let data = {
-      movieName: movieSelect,
-
+      movieTitle1: movieSelect1.name,
+      movieTitle2: movieSelect2.name 
     }
-    setSearchData(data);
-    loadApiSearchMovies();
-    setMovieSelect("");
+    setSubmissionData([movieSelect1.name,movieSelect2.name])
+    setReviewData(data);
+    loadApiAddRecommendations();
+    setMovieSelect1("");
+    setMovieSelect2("");
     setSubmissionValidation(true);
+    setSubmissionCheck(false);
   }
 };
 
-const loadApiSearchMovies = () => {
-  callApiSearchMovies()
+const loadApiAddRecommendations = () => {
+  callApiAddRecommendations()
     .then((res) => {
-      setSearchAnswer(res.data);
+      console.log(res.message);
     })
 };
 
 
 
- const callApiSearchMovies = async () => {
-  const url = serverURL + "/api/searchMovies";
+ const callApiAddRecommendations = async () => {
+  const url = serverURL + "/api/addMovieRecommendations";
 
-  let searchInfo = {
-    "movie": movieSelect,
+  let reviewInfo = {
+    "movieTitle1": movieSelect1.name,
+    "movieTitle2": movieSelect2.name 
   };
 
-  console.log(searchInfo);
+  console.log(reviewInfo);
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify(searchInfo)
+    body: JSON.stringify(reviewInfo)
   });
   const body = await response.json();
   if (response.status !== 200) throw Error(body.message);
@@ -148,16 +163,33 @@ return (
         <br></br>
         <br></br>
         <br></br>
-        <Typography variant="h3" gutterBottom component="div">Recommendations</Typography>
-        <Typography variant="h6" gutterBottom component="div">Users can receive movie recommendations based on their favourite movie. Users will select a movie from the dropdown list, and then movies from the same genre of the movie selected will be displayed.</Typography>
+         <Typography variant="h3" gutterBottom component="div">
+           recommendations
+         </Typography>
+         <Typography variant="h6" gutterBottom component="div">
+           Users can create recommendations for other users based on what movies they enjoyed watching. Users should input two movies that the user thinks peopleshould watch if they enjoyed one or the other movies that was inputted. For example, I could input Alien and Aliens because I think users who enjoyed either of those movies will like the other.
+         </Typography>
  
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
-             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect} />
+             <MovieSelection1 movies= {props.movies} handleMovieSelect1={handleMovieSelect1} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <br></br>
-             <Button variant="contained" color="primary" type ='submit'>Submit</Button>
+             <br></br>
+             <MovieSelection2 movies= {props.movies} handleMovieSelect2={handleMovieSelect2} movieSelect2={movieSelect2} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
+             <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
-         </FormControl>
+         </FormControl>                               
+         {
+          submissionValidation == true &&
+          <div>
+            <br></br>
+            <Typography variant="h5">Your recommendation has been received!</Typography>
+            <Paper>
+              <Typography variant="h6">You reccommend the movie {submissionData[1]} to people who enjoyed watching: {submissionData[0]}  </Typography>
+            </Paper>
+          </div>
+
+        }        
        </MainGridContainer>
      </Box>
    </ThemeProvider>
@@ -228,18 +260,18 @@ const Navigation =() =>{
 
 }
 
-const MovieSelection = (props) => {
+const MovieSelection1 = (props) => {
  
   const handleInput = (event) => {
-    props.handleMovieSelect(event.target.value);
+    props.handleMovieSelect1(event.target.value);
   };
   return (
         <div>
-        <InputLabel id="demo-simple-select-label">Movie</InputLabel>
+        <InputLabel id="demo-simple-select-filled-label">Movie Recommendation</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={props.movieSelect}
+          value={props.movieSelect1}
           label="Movie"
           onChange={handleInput}
           style={{width:400}}
@@ -253,8 +285,44 @@ const MovieSelection = (props) => {
         </Select>
         <FormHelperText>Select a movie</FormHelperText>
         {
-            props.movieSelect == '' && props.submissionCheck == true ? (
+            props.movieSelect1 == '' && props.submissionCheck == true ? (
             <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
+         }
+      </div>
+  );
+}
+
+const MovieSelection2 = (props) => {
+ 
+  const handleInput = (event) => {
+    props.handleMovieSelect2(event.target.value);
+  };
+  return (
+        <div>
+        <InputLabel id="demo-simple-select-filled-label">Movie Recommendation</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={props.movieSelect2}
+          label="Movie"
+          onChange={handleInput}
+          style={{width:400}}
+        >
+        {props.movies.map((movie) => {
+          return (
+            <MenuItem key={movie.id} value={movie}>{movie.name}</MenuItem>
+          )
+        }
+        )}
+        </Select>
+        <FormHelperText>Select a movie</FormHelperText>
+        {
+            props.movieSelect2 == '' && props.submissionCheck == true ? (
+            <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
+         }
+         {
+            props.movieSelect1 == props.movieSelect2 && props.submissionCheck == true ? (
+            <div><em style={{color:'red'}}>*You must choose a different movie to reccommend. You cannot recommend the same movie!</em></div>) : (<div></div>)
          }
       </div>
   );
@@ -264,10 +332,18 @@ const MovieSelection = (props) => {
 
 
 
+ 
 
 
 const Recommendations = () => {
-
+ /**
+  constructor(props) {
+    super(props);
+    this.state = {
+      userID: 1,
+      mode: 0,
+   }
+  */ 
 
   let [userId,setUserID] = React.useState(1);
   let [mode,setMode]=React.useState(0);
@@ -278,14 +354,43 @@ const Recommendations = () => {
 
 
   React.useEffect(() => {
+    //loadUserSettings();
     loadGetMovies();
    },[]);
+
+
+   const loadUserSettings =() => {
+    this.callApiLoadUserSettings()
+      .then(res => {
+        var parsed = JSON.parse(res.express);
+        console.log("loadUserSettings parsed: ", parsed[0].mode)
+        this.setState({ mode: parsed[0].mode });
+      });
+  }
 
   const loadGetMovies =() => {
     callGetMovies()
       .then(res => {
         setMovies(res.movieData);
       });
+  }
+  
+   const callApiLoadUserSettings = async () => {
+    const url = serverURL + "/api/loadUserSettings";
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        //authorization: `Bearer ${this.state.token}`
+      },
+      body: JSON.stringify({
+        userID: this.state.userID
+      })
+    });
+    const body = await response.json();
+    if (response.status !== 200) throw Error(body.message);
+    return body;
   }
   
   const callGetMovies = async() => {

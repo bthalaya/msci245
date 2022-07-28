@@ -58,6 +58,7 @@ app.post('/api/getMovies', (req,res) => {
 	connection.end();
 });
 
+
 app.post('/api/addReview', (req, res) => {
 
 	let connection = mysql.createConnection(config);
@@ -87,60 +88,65 @@ app.post('/api/addReview', (req, res) => {
 
 	let connection = mysql.createConnection(config);
  
-    let movie = req.body.movieSelect;
-    let actor = req.body.actorInfo;
-    let director = req.body.directorInfo;
+    movie = req.body.movie,
+    actor = req.body.actorInfo
+    director = req.body.directorInfo
 
+	let data=[]
 
- 
-    let sql = ""
-    let data = [];
- 
-    if (movie !== '' && actor === '' && director === '') {
-        sql = 'Select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R where M.name = '+'?'+' and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;';
-        console.log(sql);
-        data = [movie]
-    } else if (actor !== '' && movie === '' && director === ''){
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R, roles RS, actors A where concat(A.first_name, " ", A.last_name) = '+'?'+' and A.id = RS.actor_id and RS.movie_id = M.id and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;'
-        console.log(sql);
-        data = [actor];
-    } else if (director !== '' && movie === '' && actor === '') {
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R where concat(D.first_name, " ", D.last_name) = '+'?'+' and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;'
-        console.log(sql);
-        data = [director];
-    } else if (actor !== '' && movie === '' && director !== '') {
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R, roles RS, actors A where concat(D.first_name, " ", D.last_name) = '+'?'+' and concat(A.first_name, " ", A.last_name) = '+'?'+' and A.id = RS.actor_id and RS.movie_id = M.id and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;'
-        console.log(sql);
-        data = [director, actor];
-    }else if (actor === '' && movie !== '' && director !== '') {
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R, roles RS, actors A where concat(D.first_name, " ", D.last_name) = '+'?'+' and A.id = RS.actor_id and RS.movie_id = M.id and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id and M.name = '+'?'+';'
-        console.log(sql);
-        data = [director, movie];
-    }else if (actor !== '' && movie !== '' && director === '') {
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R, roles RS, actors A where  concat(A.first_name, " ", A.last_name) = '+'?'+' and A.id = RS.actor_id and RS.movie_id = M.id and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id and M.name = '+'?'+';'
-        console.log(sql);
-        data = [actor,movie];
-    }else if (actor !== '' && movie !== '' && director !== '') {
-        sql = 'select concat(D.first_name, " ", D.last_name) as dirName, AVG(R.reviewScore), R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R, roles RS, actors A where concat(D.first_name, " ", D.last_name) = '+'?'+' and concat(A.first_name, " ", A.last_name) = '+'?'+' and A.id = RS.actor_id and RS.movie_id = M.id and M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id and M.name = '+'?'+';'
-        console.log(sql);
-        data = [director, actor, movie];
-    }
+	let sql ='Select concat(D.first_name, " ", D.last_name) as name, R.reviewScore, R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R where M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;';
 
-	console.log(data);
-   
-    connection.query(sql, data, (error, data) => {
+	if(movie !== ''){
+		sql += ` AND M.name = ?`
+		data.push(movie)
+	}
+	if(director !== ''){
+		sql += ` AND concat(D.first_name, " ", D.last_name) = ?`
+		data.push(director)
+	}
+	if(actor !== ''){
+		sql +=  ` AND concat(A.first_name, " ", A.last_name) = ?`
+		data.push(actor)
+	}
+
+	console.log(data)
+    connection.query(sql,data, (error, data) => {
         if (error) {
             return res.json({ status : "ERROR", error});
         }
  
         let string = JSON.stringify(data);
-        let object = JSON.parse(string);
-        console.log(object);
-        res.send({data: object})
+        //let object = JSON.parse(string);
+        //console.log(object);
+        res.send({data: string})
  
     });
     connection.end();
 });
+
+app.post('/api/addMovieRecommendations', (req, res) => {
+
+	let connection = mysql.createConnection(config);
+
+	movieTitle1 = req.body.movieTitle1,
+	movieTitle2=req.body.movieTitle2
+	
+	  
+	let sql = "INSERT INTO `Recommendations` (movieTitle1,movieTitle2) VALUES (?,?)";
+	let data=[movieTitle1,movieTitle2];
+	console.log(sql);
+	console.log(data);       
+ 
+	connection.query(sql, data, (error, results, fields) => {
+		if (error) {
+			return console.error(error.message);
+		}
+		res.send({message: "Recommendation successfully added"});
+	 });
+	 connection.end();
+ });
+
+
 
  
 

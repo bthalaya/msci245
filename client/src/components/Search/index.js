@@ -68,7 +68,7 @@ const MainGridContainer = styled(Grid)(({ theme }) => ({
  margin: theme.spacing(4),
 }))
 
-const Review = (props) => {
+const Search = (props) => {
  
  const [movieSelect, setMovieSelect] = React.useState('');
  const [actorInfo, setActorInfo] = React.useState('');
@@ -80,7 +80,6 @@ const Review = (props) => {
 
  const handleMovieSelect = (movie) => {
    setMovieSelect(movie);
-   console.log(movie);
  };
  
  const handleActorInfo = (actorName) => {
@@ -111,7 +110,11 @@ const handleSubmissionValidation = (event) => {
 const loadApiSearchMovies = () => {
   callApiSearchMovies()
     .then((res) => {
-      setSearchAnswer(res.data);
+      console.log(res)
+        var parsed = JSON.parse(res.data);
+        console.log(parsed[0]);
+        setSearchAnswer(parsed);
+
     })
 };
 
@@ -119,6 +122,7 @@ const loadApiSearchMovies = () => {
 
  const callApiSearchMovies = async () => {
   const url = serverURL + "/api/searchMovies";
+  console.log(url)
 
   let searchInfo = {
     "movie": movieSelect,
@@ -170,7 +174,6 @@ return (
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
              <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect} />
              <ActorField handleActorInfo={handleActorInfo} actorInfo={actorInfo}/>
-             <br></br>
              <br></br>
              <DirectorField handleDirectorInfo={handleDirectorInfo} directorInfo={directorInfo}/>
              <br></br>
@@ -262,7 +265,7 @@ const MovieSelection = (props) => {
            style={{ width: 450 }}
            value={props.movieSelect}
            onChange = {handleInput}
-           helperText="Enter movie name"
+           helperText="Enter a movie name"
          />
       </div>
   );
@@ -280,7 +283,7 @@ const ActorField = (props) => {
     <div>
       <TextField
         id="actor-name" 
-         label="Actor's name"
+         label="Actor name"
          style={{ width: 300 }}
          value={props.actorInfo}
          onChange = {handleInput}
@@ -314,93 +317,6 @@ const DirectorField = (props) => {
 
  
 
-const Search = () => {
- /**
-  constructor(props) {
-    super(props);
-    this.state = {
-      userID: 1,
-      mode: 0,
-   }
-  */ 
 
-  let [userId,setUserID] = React.useState(1);
-  let [mode,setMode]=React.useState(0);
-  let [movies,setMovies]=React.useState([]);
-  
-
-
-
-
-  React.useEffect(() => {
-    //loadUserSettings();
-    loadGetMovies();
-   },[]);
-
-
-   const loadUserSettings =() => {
-    this.callApiLoadUserSettings()
-      .then(res => {
-        var parsed = JSON.parse(res.express);
-        console.log("loadUserSettings parsed: ", parsed[0].mode)
-        this.setState({ mode: parsed[0].mode });
-      });
-  }
-
-  const loadGetMovies =() => {
-    callGetMovies()
-      .then(res => {
-        setMovies(res.movieData);
-      });
-  }
-  
-   const callApiLoadUserSettings = async () => {
-    const url = serverURL + "/api/loadUserSettings";
-
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        //authorization: `Bearer ${this.state.token}`
-      },
-      body: JSON.stringify({
-        userID: this.state.userID
-      })
-    });
-    const body = await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    return body;
-  }
-  
-  const callGetMovies = async() => {
-    
-    //console.log('t',url)
-    const url = serverURL + "/api/getMovies";
-    console.log(url)
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        //authorization: `Bearer ${this.state.token}`
-      },
-    });
-    const body =await response.json();
-    if (response.status !== 200) throw Error(body.message);
-    return body;
-  }
-
-
-    return (
-      <div> 
-        <Review movies={movies}/> 
-      </div>     
-    )
-  };
-
-
-
-Search.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 
 export default Search;
