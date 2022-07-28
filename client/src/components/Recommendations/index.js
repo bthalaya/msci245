@@ -164,7 +164,7 @@ return (
         <br></br>
         <br></br>
          <Typography variant="h3" gutterBottom component="div">
-           recommendations
+           Recommendations
          </Typography>
          <Typography variant="h6" gutterBottom component="div">
            Users can create recommendations for other users based on what movies they enjoyed watching. Users should input two movies that the user thinks peopleshould watch if they enjoyed one or the other movies that was inputted. For example, I could input Alien and Aliens because I think users who enjoyed either of those movies will like the other.
@@ -185,7 +185,7 @@ return (
             <br></br>
             <Typography variant="h5">Your recommendation has been received!</Typography>
             <Paper>
-              <Typography variant="h6">You reccommend the movie {submissionData[1]} to people who enjoyed watching: {submissionData[0]}  </Typography>
+              <Typography variant="h6">You recommend the movie {submissionData[1]} to people who enjoyed watching: {submissionData[0]}  </Typography>
             </Paper>
           </div>
 

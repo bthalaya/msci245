@@ -100,9 +100,9 @@ const handleSubmissionValidation = (event) => {
     }
     setSearchData(data);
     loadApiSearchMovies();
-    setMovieSelect("");
-    setActorInfo("");
-    setDirectorInfo("");
+    setMovieSelect('');
+    setActorInfo('');
+    setDirectorInfo('');
     setSubmissionValidation(true);
   }
 };

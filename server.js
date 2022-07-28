@@ -94,7 +94,7 @@ app.post('/api/addReview', (req, res) => {
 
 	let data=[]
 
-	let sql ='Select concat(D.first_name, " ", D.last_name) as name, R.reviewScore, R.reviewContent as review, M.name as movieName from movies M, directors D, movies_directors MD, Review R where M.id = MD.movie_id and D.id = MD.director_id and R.movieID = M.id and R.movieID = MD.movie_id;';
+	let sql ='SELECT concat(D.first_name, " ", D.last_name) as dirName, R.reviewScore, R.reviewContent as review, M.name as movieName FROM movies M, directors D, movies_directors MD, Review R WHERE M.id = MD.movie_id AND D.id = MD.director_id AND R.movieID = M.id AND R.movieID = MD.movie_id;';
 
 	if(movie !== ''){
 		sql += ` AND M.name = ?`
@@ -110,6 +110,7 @@ app.post('/api/addReview', (req, res) => {
 	}
 
 	console.log(data)
+	console.log(sql)
     connection.query(sql,data, (error, data) => {
         if (error) {
             return res.json({ status : "ERROR", error});
