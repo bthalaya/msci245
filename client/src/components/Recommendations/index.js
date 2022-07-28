@@ -321,7 +321,7 @@ const MovieSelection2 = (props) => {
             <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
          }
          {
-            props.movieSelect1 == props.movieSelect2 && props.submissionCheck == true ? (
+            props.movieSelect1 == props.movieSelect2 && props.movieSelect1 !=='' && props.movieSelect2 !='' && props.submissionCheck == true ? (
             <div><em style={{color:'red'}}>*You must choose a different movie to reccommend. You cannot recommend the same movie!</em></div>) : (<div></div>)
          }
       </div>
@@ -425,4 +425,5 @@ Recommendations.propTypes = {
 };
 
 export default Recommendations;
+
 
