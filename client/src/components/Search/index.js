@@ -68,14 +68,14 @@ const MainGridContainer = styled(Grid)(({ theme }) => ({
  margin: theme.spacing(4),
 }))
 
-const Search = (props) => {
+const Search = () => {
  
+const [directorInfo, setDirectorInfo] = React.useState('');
  const [movieSelect, setMovieSelect] = React.useState('');
  const [actorInfo, setActorInfo] = React.useState('');
- const [directorInfo, setDirectorInfo] = React.useState('');
  const [submissionValidation,setSubmissionValidation] = React.useState(false);
  let [searchData,setSearchData] = React.useState([]);
- let [searchAnswer,setSearchAnswer] = React.useState({});
+ let [searchAnswer,setSearchAnswer] = React.useState([]);
  
 
  const handleMovieSelect = (movie) => {
@@ -87,23 +87,16 @@ const Search = (props) => {
 };
 
 const handleDirectorInfo = (directorName) => {
-    setDirectorInfo(directorName);
-  };
+  setDirectorInfo(directorName);
+};
 
 const handleSubmissionValidation = (event) => {
   event.preventDefault();
   if(movieSelect != '' || actorInfo != '' || directorInfo !=''){
-    let data = {
-      movieName: movieSelect,
-      actorName: actorInfo,
-      directorName: directorInfo
-    }
-    setSearchData(data);
     loadApiSearchMovies();
+    setDirectorInfo('');
     setMovieSelect('');
     setActorInfo('');
-    setDirectorInfo('');
-    setSubmissionValidation(true);
   }
 };
 const loadApiSearchMovies = () => {
@@ -170,7 +163,7 @@ return (
  
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
-             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect} movieSelect={movieSelect} />
+             <MovieSelection handleMovieSelect={handleMovieSelect} movieSelect={movieSelect} />
              <ActorField handleActorInfo={handleActorInfo} actorInfo={actorInfo}/>
              <br></br>
              <DirectorField handleDirectorInfo={handleDirectorInfo} directorInfo={directorInfo}/>
@@ -184,7 +177,7 @@ return (
          </FormControl>
          {searchAnswer.map(data => {
           return (
-            <><li>Movie Name: {data.movieName} <div></div>Movie Director: {data.dirName} <div></div>Movie Reviews: {data.review} <div></div>Movie Rating: {data.reviewScore}</li><br></br></>
+            <><li>Movie Name: {data.name} <div></div>Movie Director: {data.dirName} <div></div>Movie Reviews: {data.reviewContent} <div></div>Average Rating: {data.avg}</li><br></br></>
           )
          })}
        </MainGridContainer>
@@ -277,7 +270,6 @@ const MovieSelection = (props) => {
   );
 }
 
-
 const ActorField = (props) => {
  
  const handleInput = (event) => {
@@ -312,7 +304,7 @@ const DirectorField = (props) => {
            id="director-name" 
             label="Director's name"
             style={{ width: 300 }}
-            value={props.DirectorInfo}
+            value={props.directorInfo}
             onChange = {handleInput}
             helperText="Enter director's first and last name"
           />

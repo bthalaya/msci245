@@ -167,15 +167,17 @@ return (
            Recommendations
          </Typography>
          <Typography variant="h6" gutterBottom component="div">
-           Users can create recommendations for other users based on what movies they enjoyed watching. Users should input two movies that the user thinks peopleshould watch if they enjoyed one or the other movies that was inputted. For example, I could input Alien and Aliens because I think users who enjoyed either of those movies will like the other.
+           Users can create recommendations for other users based on what movies they enjoyed watching. Users should input two movies that the user thinks people should watch if they enjoyed either one of the movies that was inputted. For example, I could input Alien and Aliens because I think users who enjoyed either of those movies will like the other.
          </Typography>
  
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
+             <Typography>Movie Title</Typography>
              <MovieSelection1 movies= {props.movies} handleMovieSelect1={handleMovieSelect1} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
-             <MovieSelection2 movies= {props.movies} handleMovieSelect2={handleMovieSelect2} movieSelect2={movieSelect2} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
+             <Typography> Movie Title</Typography>
+             <MovieSelection2 movies = {props.movies} handleMovieSelect2={handleMovieSelect2} movieSelect2={movieSelect2} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
          </FormControl>                               
@@ -267,10 +269,9 @@ const MovieSelection1 = (props) => {
   };
   return (
         <div>
-        <InputLabel id="demo-simple-select-filled-label">Movie Recommendation</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="demo-simple-select-label-standard-label"
+          id="demo-simple-select-standard"
           value={props.movieSelect1}
           label="Movie"
           onChange={handleInput}
@@ -299,10 +300,9 @@ const MovieSelection2 = (props) => {
   };
   return (
         <div>
-        <InputLabel id="demo-simple-select-filled-label">Movie Recommendation</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="demo-simple-select-label-standard-label"
+          id="demo-simple-select-standard"
           value={props.movieSelect2}
           label="Movie"
           onChange={handleInput}
