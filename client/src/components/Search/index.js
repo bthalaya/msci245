@@ -106,7 +106,6 @@ const handleSubmissionValidation = (event) => {
     setSubmissionValidation(true);
   }
 };
-
 const loadApiSearchMovies = () => {
   callApiSearchMovies()
     .then((res) => {
@@ -114,7 +113,6 @@ const loadApiSearchMovies = () => {
         var parsed = JSON.parse(res.data);
         console.log(parsed[0]);
         setSearchAnswer(parsed);
-
     })
 };
 
@@ -179,8 +177,16 @@ return (
              <br></br>
              <br></br>
              <Button variant="contained" color="primary" type ='submit'>Submit</Button>
+             <br></br>
+             <br></br>
+             <br></br>
            </form>
          </FormControl>
+         {searchAnswer.map(data => {
+          return (
+            <><li>Movie Name: {data.movieName} <div></div>Movie Director: {data.dirName} <div></div>Movie Reviews: {data.review} <div></div>Movie Rating: {data.reviewScore}</li><br></br></>
+          )
+         })}
        </MainGridContainer>
      </Box>
    </ThemeProvider>
