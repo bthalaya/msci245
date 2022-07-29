@@ -31,8 +31,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 
 
 //Dev mode
-const serverURL = "";
-//const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3046";
+//const serverURL = "";
+const serverURL = "http://ec2-18-216-101-119.us-east-2.compute.amazonaws.com:3046";
  //enable for dev mode
  //enable for dev mode
 //Deployment mode instructions
