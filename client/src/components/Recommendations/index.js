@@ -172,15 +172,17 @@ return (
  
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
-             <Typography>Movie Title</Typography>
-             <MovieSelection1 movies= {props.movies} handleMovieSelect1={handleMovieSelect1} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
+             <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect1} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
-             <Typography> Movie Title</Typography>
-             <MovieSelection2 movies = {props.movies} handleMovieSelect2={handleMovieSelect2} movieSelect2={movieSelect2} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
+             <MovieSelection movies = {props.movies} handleMovieSelect={handleMovieSelect2} movieSelect1={movieSelect2} movieSelect2={movieSelect1} submissionCheck={submissionCheck}/>
              <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
-         </FormControl>                               
+         </FormControl> 
+         {
+            movieSelect1 == movieSelect2 && movieSelect1 !=='' && movieSelect2 !='' && submissionCheck == true ? (
+            <div><em style={{color:'red'}}>*You must choose a different movie to reccommend. You cannot recommend the same movie!</em></div>) : (<div></div>)
+         }                               
          {
           submissionValidation == true &&
           <div>
@@ -191,7 +193,7 @@ return (
             </Paper>
           </div>
 
-        }        
+        }       
        </MainGridContainer>
      </Box>
    </ThemeProvider>
@@ -262,16 +264,16 @@ const Navigation =() =>{
 
 }
 
-const MovieSelection1 = (props) => {
+const MovieSelection = (props) => {
  
   const handleInput = (event) => {
-    props.handleMovieSelect1(event.target.value);
+    props.handleMovieSelect(event.target.value);
   };
   return (
         <div>
-        <Select
-          labelId="demo-simple-select-label-standard-label"
-          id="demo-simple-select-standard"
+         <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
           value={props.movieSelect1}
           label="Movie"
           onChange={handleInput}
@@ -293,40 +295,6 @@ const MovieSelection1 = (props) => {
   );
 }
 
-const MovieSelection2 = (props) => {
- 
-  const handleInput = (event) => {
-    props.handleMovieSelect2(event.target.value);
-  };
-  return (
-        <div>
-        <Select
-          labelId="demo-simple-select-label-standard-label"
-          id="demo-simple-select-standard"
-          value={props.movieSelect2}
-          label="Movie"
-          onChange={handleInput}
-          style={{width:400}}
-        >
-        {props.movies.map((movie) => {
-          return (
-            <MenuItem key={movie.id} value={movie}>{movie.name}</MenuItem>
-          )
-        }
-        )}
-        </Select>
-        <FormHelperText>Select a movie</FormHelperText>
-        {
-            props.movieSelect2 == '' && props.submissionCheck == true ? (
-            <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
-         }
-         {
-            props.movieSelect1 == props.movieSelect2 && props.movieSelect1 !=='' && props.movieSelect2 !='' && props.submissionCheck == true ? (
-            <div><em style={{color:'red'}}>*You must choose a different movie to reccommend. You cannot recommend the same movie!</em></div>) : (<div></div>)
-         }
-      </div>
-  );
-}
 
 
 
