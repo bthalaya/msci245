@@ -173,11 +173,9 @@ return (
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
             <br></br>
-            <Typography>Movie Title</Typography>
              <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect1} labelId={"demo-simple-select-label"} id={"demo-simple-select"} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
-             <Typography>Movie Title</Typography>
              <MovieSelection movies = {props.movies} handleMovieSelect={handleMovieSelect2}  labelId={"demo-simple-select-label"} id={"demo-simple-select"} movieSelect1={movieSelect2} submissionCheck={submissionCheck}/>
              <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
@@ -275,7 +273,7 @@ const MovieSelection = (props) => {
   return (
         <div>
         <FormControl>
-        <InputLabel id="demo-simple-select-label">Movie</InputLabel>
+        <InputLabel id="demo-simple-select-label">Movie Title</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
