@@ -172,9 +172,12 @@ return (
  
          <FormControl>
            <form autoComplete='off' onSubmit={handleSubmissionValidation}>
+            <br></br>
+            <Typography>Movie Title</Typography>
              <MovieSelection movies= {props.movies} handleMovieSelect={handleMovieSelect1} movieSelect1={movieSelect1} submissionCheck={submissionCheck}/>
              <br></br>
              <br></br>
+             <Typography>Movie Title</Typography>
              <MovieSelection movies = {props.movies} handleMovieSelect={handleMovieSelect2} movieSelect1={movieSelect2} movieSelect2={movieSelect1} submissionCheck={submissionCheck}/>
              <Button variant="contained" color="primary" type ='submit' onClick={handleSubmissionCheck}>Submit</Button>
            </form>
