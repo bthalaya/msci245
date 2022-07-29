@@ -274,9 +274,11 @@ const MovieSelection = (props) => {
   };
   return (
         <div>
-         <Select
-          labelId= {props.labelID}
-          id={props.id}
+        <FormControl>
+        <InputLabel id="demo-simple-select-label">Movie</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
           value={props.movieSelect1}
           label="Movie"
           onChange={handleInput}
@@ -294,6 +296,7 @@ const MovieSelection = (props) => {
             props.movieSelect1 == '' && props.submissionCheck == true ? (
             <div><em style={{color:'red'}}>*Please select a movie. It is a mandatory field!</em></div>) : (<div></div>)
          }
+         </FormControl>
       </div>
   );
 }
