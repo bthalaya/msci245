@@ -90,7 +90,7 @@ return (
           <br></br>
           <br></br>
          <Typography variant="h7" gutterBottom component="div">
-           Users can input reviews on the 'Movie Review' page, add recommendations on the 'Recommendations' page, and search the movie database by actors, directors and movie.
+           Users can input reviews on the 'Movie Review' page, add recommendations on the 'Recommendations' page, and search the movie database by actors, directors and movie on the 'Search' page.
          </Typography>
          </div>
         
