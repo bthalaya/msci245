@@ -93,7 +93,7 @@ app.post('/api/addReview', (req, res) => {
     director = req.body.directorInfo
 
 	let data=[]
-	let sql ='SELECT Movie.name, Movie.dirName, Movie.id, Movie.reviewContent, Rev.avg FROM (SELECT m.id, m.name, m.dirName, Rev.reviewContent FROM (SELECT DISTINCT m.id, m.name,concat(d.first_name, " ", d.last_name) AS dirName FROM movies m, directors d, actors a, movies_directors md, roles r WHERE m.id = md.movie_id AND d.id=md.director_id AND a.id=r.actor_id AND m.id=r.movie_id';
+	let sql ='SELECT Movie.name, Movie.dirName, Movie.id, Movie.reviewContent, R.avg FROM (SELECT m.id, m.name, m.dirName, R.reviewContent FROM (SELECT DISTINCT m.id, m.name,concat(d.first_name, " ", d.last_name) AS dirName FROM movies m, directors d, actors a, movies_directors md, roles r WHERE m.id = md.movie_id AND d.id=md.director_id AND a.id=r.actor_id AND m.id=r.movie_id';
 
 
 
@@ -120,7 +120,7 @@ app.post('/api/addReview', (req, res) => {
 		data = [actor,movie, director]
 	}
 
-	sql = sql + ') AS m LEFT OUTER JOIN Review Rev on Rev.movieID = m.id) AS Movie LEFT OUTER JOIN (SELECT movies.id AS ids, AVG(reviewScore) AS avg FROM Review, movies WHERE Review.movieID = movies.id GROUP BY movies.id) AS Rev on Rev.ids = Movie.id;'
+	sql = sql + ') AS m LEFT OUTER JOIN Review R on R.movieID = m.id) AS Movie LEFT OUTER JOIN (SELECT movies.id AS ids, AVG(reviewScore) AS avg FROM Review, movies WHERE Review.movieID = movies.id GROUP BY movies.id) AS R on R.ids = Movie.id;'
 	console.log(data)
 	console.log(sql)
     connection.query(sql,data, (error, data) => {
